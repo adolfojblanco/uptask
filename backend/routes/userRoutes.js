@@ -1,13 +1,16 @@
 import express from 'express';
 const router = express.Router();
 
-import { usersList, createUser } from '../controllers/userController.js';
+import { usersList, createUser, loginUser } from '../controllers/userController.js';
 
 /** user router */
 
-router.get('/', usersList);
+router.get('/', usersList); // Get al users
 
-router.post('/', createUser);
+router.post('/', createUser); // Create a new user
+
+/** Auth Routes */
+router.post('/login', loginUser);
 
 router.put('/', (req, res) => {
   res.send('desde usuarios');

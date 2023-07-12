@@ -37,9 +37,17 @@ const userSchema = mongoose.Schema(
   Se ejecuta antes de guardar en la BD
 */
 userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    next();
+  }
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
+userSchema.methods.comparePassword = async function (passwordForm) {
+  return await bcrypt.compare(passwordForm, this.password);
+};
 
 const User = mongoose.model('user', userSchema);
 export default User;
