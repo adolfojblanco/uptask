@@ -16,12 +16,11 @@ export const checkAuth = async (req, res, next) => {
       );
       return next();
     } catch (error) {
-      return res.status(401).json({ msg: 'Hubo un error', error });
+      return res.status(401).json({ msg: 'Token invalidooooo' });
     }
   }
   if (!token) {
-    const error = new Error('Token no valido');
-    return res.status(401).json({ msg: 'Hubo un error', error });
+    return res.status(401).json({ msg: 'Token invalido' });
   }
   next();
 };
