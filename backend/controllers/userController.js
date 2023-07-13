@@ -77,3 +77,107 @@ export const loginUser = async (req, res) => {
     });
   }
 };
+
+/**
+ * Confirm account whit token
+ * @param { token } req token
+ */
+export const confirmToken = async (req, res) => {
+  const { token } = req.params;
+  const user = await User.findOne({ token });
+
+  if (!user) {
+    const error = new Error('Token no valido');
+    return res.status(403).json({
+      message: error.message,
+    });
+  }
+
+  try {
+    user.confirmado = true;
+    user.token = '';
+    await user.save();
+
+    res.status(200).json({
+      message: 'Cuenta confirmada',
+    });
+  } catch (error) {
+    return res.status(403).json({
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * Restablecer cuenta de usuario
+ * @param {email} req user email
+ * @param {token} res token
+ */
+export const forgetPassword = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email: email });
+
+  if (!user) {
+    const error = new Error('El usuario no esta registrado');
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+
+  try {
+    user.token = generarId();
+    await user.save();
+
+    res.status(200).json({
+      message: 'Hemos enviado un email con las instrucciones para restablecer la contraseña',
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+
+export const checkToken = async (req, res) => {
+  const { token } = req.params;
+  const user = await User.findOne({ token });
+
+  if (!user) {
+    const error = new Error('Token no valido');
+    return res.status(403).json({
+      message: error.message,
+    });
+  } else {
+  }
+};
+
+/**
+ * Add the new password
+ * @param {password} req new password
+ * @returns
+ */
+export const newPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const user = await User.findOne({ token });
+  if (user) {
+    user.password = password;
+    user.token = '';
+    await user.save();
+
+    res.status(200).json({
+      message: 'La constraseña se modifico correctamente',
+    });
+  } else {
+    const error = new Error('Token no valido');
+    return res.status(403).json({
+      message: error.message,
+    });
+  }
+};
+
+export const profile = async (req, res) => {
+  const { user } = req;
+  console.log(user);
+};
