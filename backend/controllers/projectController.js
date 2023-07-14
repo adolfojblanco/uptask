@@ -104,14 +104,14 @@ export const deleteProject = async (req, res) => {
   const project = await Project.findById(id);
 
   if (!project) {
-    const error = new Error('Proyecto no encontrado');
+    const error = new Error('Proyecto no existe');
     return res.status(404).json({
       error,
     });
   }
 
   if (project.creator.toString() !== req.user._id.toString()) {
-    const error = new Error('Proyecto no encontrado');
+    const error = new Error('No se pudo eliminar el proyecto');
     return res.status(404).json({
       error,
     });
