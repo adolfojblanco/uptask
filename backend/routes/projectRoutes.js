@@ -8,7 +8,7 @@ import {
   editProject,
   getProject,
   getProjects,
-  getTask,
+  getTasks,
   newProject,
 } from '../controllers/projectController.js';
 
@@ -20,8 +20,9 @@ router
   .put(checkAuth, editProject)
   .delete(checkAuth, deleteProject);
 
-router.get('/task/:id', checkAuth, getTask);
+router.get('/task/:id', checkAuth, getTasks);
 router.post('/add-colaborator/:id', checkAuth, addColaborator);
 router.post('/delete-colaborator/:id', checkAuth, addColaborator);
 
 export default router;
+9

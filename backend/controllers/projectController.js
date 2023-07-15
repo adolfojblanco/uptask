@@ -1,4 +1,5 @@
 import Project from '../models/Project.js';
+import Task from '../models/Task.js';
 
 /**
  * Get all project for auth user
@@ -37,7 +38,12 @@ export const newProject = async (req, res) => {
   }
 };
 
-/** Obtener proyecto */
+/**
+ * Devuelve un proyecto, de un creador, con sus tareas
+ * @param {id} req project id
+ * @param {project[]}
+ * @returns projects[]
+ */
 export const getProject = async (req, res) => {
   const { id } = req.params;
   const project = await Project.findById(id);
@@ -55,12 +61,18 @@ export const getProject = async (req, res) => {
       error,
     });
   }
+  const tasks = await Task.find().where('project').equals(project._id);
 
   res.status(200).json({
     project,
+    tasks,
   });
 };
 
+/**
+ * Edit project
+ * @returns Edit project
+ */
 export const editProject = async () => {
   const { id } = req.params;
   const project = await Project.findById(id);
@@ -135,4 +147,25 @@ export const addColaborator = async () => {};
 
 export const deleteColaborator = async () => {};
 
-export const getTask = async () => {};
+/**
+ * Obtener tareas de un colaborador o dueño del proyecto
+ * @param {id} req project id
+ * @returns tasks[]
+ */
+export const getTasks = async (req, res) => {
+  const { id } = req.params;
+  const project = await Project.findById(id);
+
+  if (!project) {
+    const error = new Error('Proyecto no existe');
+    return res.status(404).json({
+      error,
+    });
+  }
+
+  const tasks = await Task.find().where('project').equals(id);
+
+  res.status(200).json({
+    tasks,
+  });
+};
