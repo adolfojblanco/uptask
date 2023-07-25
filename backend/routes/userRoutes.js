@@ -32,7 +32,7 @@ router.delete('/', (req, res) => {
 
 /** Auth Routes */
 router.post('/login', loginUser);
-router.post('/confirm/:token', confirmToken);
+router.get('/confirm/:token', confirmToken);
 router.post('/forget-password', forgetPassword);
 
 router.route('/forget-password/:token').get(checkToken).post(newPassword);

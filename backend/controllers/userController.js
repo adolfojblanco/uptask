@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import { generarId } from '../helpers/generarid.js';
 import generateJwt from '../helpers/generateJwt.js';
+import { registerEmail, lostPassword } from '../helpers/emails.js';
 
 export const usersList = (req, res) => {
   res.json('desde API/USUARIO');
@@ -23,16 +24,19 @@ export const createUser = async (req, res) => {
   try {
     const user = new User(req.body);
     user.token = generarId();
+    await registerEmail(user);
     await user.save();
 
+    /** envio de email */
+
     res.status(200).json({
-      message: 'Usuario creado correctamente',
+      message: 'Usuario creado correctamente, revisa tu email para configurar cuenta',
       user,
     });
   } catch (error) {
-    console.log(`Errror: ${error}`);
+    console.log(error);
     res.status(400).json({
-      error,
+      error: error.message,
     });
   }
 };
@@ -89,7 +93,7 @@ export const confirmToken = async (req, res) => {
   if (!user) {
     const error = new Error('Token no valido');
     return res.status(403).json({
-      message: error.message,
+      msg: error.message,
     });
   }
 
@@ -99,12 +103,10 @@ export const confirmToken = async (req, res) => {
     await user.save();
 
     res.status(200).json({
-      message: 'Cuenta confirmada',
+      message: 'Cuenta confirmada correctamente',
     });
   } catch (error) {
-    return res.status(403).json({
-      message: error.message,
-    });
+    console.log(error);
   }
 };
 
@@ -127,6 +129,7 @@ export const forgetPassword = async (req, res) => {
   try {
     user.token = generarId();
     await user.save();
+    await lostPassword(user);
 
     res.status(200).json({
       message: 'Hemos enviado un email con las instrucciones para restablecer la contraseña',
@@ -167,12 +170,12 @@ export const newPassword = async (req, res) => {
     await user.save();
 
     res.status(200).json({
-      message: 'La constraseña se modifico correctamente',
+      msg: 'La constraseña se modifico correctamente',
     });
   } else {
     const error = new Error('Token no valido');
     return res.status(403).json({
-      message: error.message,
+      msg: error.message,
     });
   }
 };
