@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 const conectDB = async () => {
   try {
     const connection = await mongoose.connect(
-      `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@task.uv6rz1j.mongodb.net/task`,
+      `mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@${process.env.MONGODB_URL}/${process.env.MONGODB_DB}`,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
